@@ -19,8 +19,6 @@ reber_matrix = {}
 for i in range(len(reber_values)):
     reber_matrix[i] = [j for j in range(len(reber_values[0])) if reber_values[i][j] != '']
 
-print(reber_matrix)
-
 def generate_reber():
     reb_str = ''
     to_add = reber_values[0][1]
