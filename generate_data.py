@@ -29,13 +29,12 @@ def preprocess(x_batch,y_batch):
         pickle.dump(tokenizer,f,protocol=pickle.HIGHEST_PROTOCOL)
 
     x_batch, y_batch = shuffle(x_batch,y_batch)
-    x_batch = np.array(tokenizer.texts_to_sequences(x_batch)) 
-    x_batch = [tf.one_hot(x,depth=num_letters) for x in x_batch]
+    x_batch = tokenizer.texts_to_sequences(x_batch)
+    x_batch = tf.ragged.constant([tf.one_hot(x,depth=num_letters).numpy() for x in x_batch])
 
     return x_batch, y_batch
 
 def create_data(true_sample_size = 10000):
-    true_sample_size = 10
     true_samples = set()
     
     while len(true_samples) < true_sample_size:
@@ -48,12 +47,8 @@ def create_data(true_sample_size = 10000):
     false_samples = [permute(s) for s in true_samples]
     
     x = true_samples + false_samples
-    y = [1 for _ in true_samples] + [0 for _ in false_samples]
+    y = np.array([[1.] for _ in true_samples] + [[0.] for _ in false_samples])
     
     xb, yb = preprocess(x,y)
 
     return xb, yb
-
-if __name__ == '__main__':
-    xb, yb = create_data(10)
-    print(xb, yb)
